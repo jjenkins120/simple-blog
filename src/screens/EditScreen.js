@@ -3,26 +3,30 @@ import {View, Text, StyleSheet, TextInput, Button} from 'react-native'
 import { Context } from '../context/BlogContext'
 
 const EditScreen = ({ navigation }) => {
-    const [title, setTitle] = useState('')
-    const [content, setContent] = useState('')
-    const { addBlogPost } = useContext(Context)
+    //ORDER OF THE CONST VARIABLES MATTER - VARIABLES NEED TO BE DEFINED BEFORE THEY CAN BE IMPLEMENTED -otherwise the hooks below wont work
+    const { state } = useContext(Context)
+    const blogPost = state.find(blogPost => blogPost.id === navigation.getParam('id'))
+    
+    const [title, setTitle] = useState(blogPost.title)
+    const [content, setContent] = useState(blogPost.content)
+    // const { editBlogPost } = useContext(Context)
 
     return (
         <View>
-            <Text>Edit Screen</Text>
-            {/* <Text style={styles.label}>Enter Title:</Text>
+            <Text>Edit Screen - {navigation.getParam('id')}</Text>
+            <Text style={styles.label}>Enter Title:</Text>
             <TextInput value={title} onChangeText={text => setTitle(text)} style={styles.input}/>
             <Text style={styles.label}>Enter Content:</Text>
             <TextInput value={content} onChangeText={text => setContent(text)} style={styles.input}/>
-            <Button 
+            {/* <Button 
                 title='Add Blog Post' 
                 onPress={() => {
                     addBlogPost(title, content, () => {
                         navigation.navigate('Index')
                     }) 
                 }} 
-                />
-                */}
+                /> */}
+               
                 
         </View>
     )

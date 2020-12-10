@@ -20,7 +20,8 @@ const ShowScreen = ({ navigation }) => {
 ShowScreen.navigationOptions = ({ navigation }) => {
     return {
         headerRight: () => (
-        <TouchableOpacity onPress={() => navigation.navigate('Edit')}>
+        <TouchableOpacity onPress={() => navigation.navigate('Edit', {id: navigation.getParam('id')})}>
+            {/* the second argument on navigate is the id we want to pass down to the edit page (as it was passed down to the ShowScreen) so that we can identify the proper blog to edit */}
             <EvilIcons name="pencil" style={styles.icon} />
         </TouchableOpacity>
         ),
