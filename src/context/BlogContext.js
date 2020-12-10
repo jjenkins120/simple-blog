@@ -7,7 +7,7 @@ import createDataContext from './createDataContext'
 const blogReducer = (state, action) => {
     switch (action.type) {
         case 'add_blogpost': 
-            return [...state, {title: `Blog Post #${state.length + 1}`, id: Math.floor(Math.random() * 9999)}]
+            return [...state, {title: action.payload.title, content: action.payload.content, id: Math.floor(Math.random() * 9999)}]
         case 'delete_blogpost':
             return state.filter(blogPost => blogPost.id !== action.payload)
         default: 
@@ -16,8 +16,9 @@ const blogReducer = (state, action) => {
 }
 
 const addBlogPost = dispatch => {
-    return () => {
-        dispatch({type: 'add_blogpost'})
+    return (title, content, callback) => {
+        dispatch({type: 'add_blogpost', payload: { title, content }})
+        callback()
     }
 }
 
@@ -43,4 +44,9 @@ const deleteBlogPost = dispatch => {
 //NO LONGER NEED BECAUSE OF createDataContext
 // export default BlogContext
 
-export const { Context, Provider } = createDataContext(blogReducer, { addBlogPost, deleteBlogPost }, [])
+export const { Context, Provider } = createDataContext(
+    blogReducer, 
+    { addBlogPost, deleteBlogPost }, 
+    [{ title: 'TEST POST', content:'TEST CONTENT',  id: 1 }]
+    // typically the initial state above would be an empty array, but for testing purposes, we've entered in data so that we don't have to continually add a blog post in order to test it
+    )

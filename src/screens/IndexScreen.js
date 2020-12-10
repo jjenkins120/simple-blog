@@ -5,18 +5,18 @@ import { Context } from '../context/BlogContext'
 import { Feather } from '@expo/vector-icons';
 
 const IndexScreen = ({ navigation }) => {
-    const { state, addBlogPost, deleteBlogPost } = useContext(Context)
+    const { state, deleteBlogPost } = useContext(Context)
     //this assigns the value state prop to a variable   
 
     return (
         <View>
-            <Button title='Add Post' onPress={addBlogPost}/>
             <FlatList 
                 data={state}
                 keyExtractor={blogPost => blogPost.title}
                 renderItem={({ item }) => {
                     return (
                         <TouchableOpacity onPress={() => navigation.navigate('Show', { id: item.id })}>
+                            {/* navigate can take two arguments*/}
                             <View style={styles.row}>
                                 <Text style={styles.title}>{item.title} - {item.id}</Text>
                                 <TouchableOpacity onPress={() => deleteBlogPost(item.id) }>
@@ -29,6 +29,16 @@ const IndexScreen = ({ navigation }) => {
             />
         </View>
     )
+}
+
+IndexScreen.navigationOptions = ({ navigation }) => {
+    return {
+        headerRight: () => (
+          <TouchableOpacity onPress={() => navigation.navigate('Create')}>
+            <Feather name="plus" style={styles.headerIcon}/>
+          </TouchableOpacity>
+        ),
+    };
 }
 
 const styles = StyleSheet.create({
@@ -45,6 +55,10 @@ const styles = StyleSheet.create({
     },
     icon: {
         fontSize: 24
+    },
+    headerIcon: {
+        marginRight: 20, 
+        fontSize: 30
     }
 })
 
