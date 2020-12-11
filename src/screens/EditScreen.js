@@ -12,10 +12,10 @@ const EditScreen = ({ navigation }) => {
     return <BlogPostForm 
     initialValues = {{title: blogPost.title, content: blogPost.content}}
     onSubmit={(newTitle, newContent) => {
-        editBlogPost(id, newTitle, newContent)
+        editBlogPost(id, newTitle, newContent, () => navigation.pop())
     }
     }/>
-    
+    // pop function in the navigation prop allows us to navigate back to the previous screen. Again we want to pass the navigation argument into context to avoid loading issues during navigation
 }
 
 const styles = StyleSheet.create({
