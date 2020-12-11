@@ -1,13 +1,16 @@
 import createDataContext from './createDataContext'
-
+import jsonServer from '../api/jsonServer'
 //NO LONGER NEED BECAUSE OF createDataContext
 // const BlogContext = React.createContext()
 //this is the piping network that will move information stored in global state (our provider component) to our individual components that need access to that information
 
 const blogReducer = (state, action) => {
     switch (action.type) {
-        case 'add_blogpost': 
-            return [...state, {title: action.payload.title, content: action.payload.content, id: Math.floor(Math.random() * 9999)}]
+        case 'get_blogposts':
+            return action.payload
+        // case 'add_blogpost': 
+        //     return [...state, {title: action.payload.title, content: action.payload.content, id: Math.floor(Math.random() * 9999)}]
+        // don't need this anymore because we are working with the API
         case 'delete_blogpost':
             return state.filter(blogPost => blogPost.id !== action.payload)
         case 'edit_blogpost':
@@ -19,9 +22,19 @@ const blogReducer = (state, action) => {
     }
 }
 
+const getBlogPosts = dispatch => {
+    return async () => {
+        const response = await jsonServer.get('/blogposts')
+        //remember - the '/blogposts' will be concatenated on the baseURL in the jsonServer
+        dispatch({ type: 'get_blogposts', payload: response.data })
+        //response.data is the json array of blogpost objects
+    }
+}
+
+
 const addBlogPost = dispatch => {
-    return (title, content, callback) => {
-        dispatch({type: 'add_blogpost', payload: { title, content }})
+    return async (title, content, callback) => {
+        await jsonServer.post('/blogposts', { title, content })
         if (callback){
             callback()
         }
@@ -29,13 +42,16 @@ const addBlogPost = dispatch => {
 }
 
 const deleteBlogPost = dispatch => {
-    return (id) => {
+    return async (id) => {
+        await jsonServer.delete(`/blogposts/${id}`)
         dispatch({type: 'delete_blogpost', payload: id})
+        // we can continue to use the dispatch here so that the backend and frontend are updated. We could, if we wanted to, could make another fetch request to get all the blogposts, but it is expensive and unnecessary 
     }
 }
 
 const editBlogPost = dispatch => {
-    return (id, title, content, callback) => {
+    return async (id, title, content, callback) => {
+        await jsonServer.patch(`/blogposts/${id}`, { title, content })
         dispatch({type: 'edit_blogpost', 
             payload: {id, title, content}
         })
@@ -63,7 +79,6 @@ const editBlogPost = dispatch => {
 
 export const { Context, Provider } = createDataContext(
     blogReducer, 
-    { addBlogPost, deleteBlogPost, editBlogPost }, 
-    [{ title: 'TEST POST', content:'TEST CONTENT',  id: 1 }]
-    // typically the initial state above would be an empty array, but for testing purposes, we've entered in data so that we don't have to continually add a blog post in order to test it
-    )
+    { addBlogPost, deleteBlogPost, editBlogPost, getBlogPosts }, 
+    []
+)

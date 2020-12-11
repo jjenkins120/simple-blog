@@ -1,12 +1,28 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import {View, Text, StyleSheet, FlatList, Button, TouchableOpacity} from 'react-native'
 import { Context } from '../context/BlogContext'
 //this will import the props Context from the BlogContext, useContext will let us be able to use the props in a meaningful way
 import { Feather } from '@expo/vector-icons';
 
 const IndexScreen = ({ navigation }) => {
-    const { state, deleteBlogPost } = useContext(Context)
+    const { state, deleteBlogPost, getBlogPosts } = useContext(Context)
     //this assigns the value state prop to a variable   
+
+    useEffect (() => {
+        getBlogPosts()
+
+        navigation.addListener('didFocus', () => {
+            getBlogPosts()
+        })
+
+        return () => {
+            listener.remove()
+        }
+
+    }, []) 
+    //the navigation callback function essentially means that anytime we return to this screen, do another fetch request
+    //if you add state in the second argument, it will keep rerendering and break
+    //listener.remove is best practice
 
     return (
         <View>
