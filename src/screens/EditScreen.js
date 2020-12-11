@@ -1,35 +1,21 @@
-import React, { useContext, useState } from 'react'
-import {View, Text, StyleSheet, TextInput, Button} from 'react-native'
+import React, { useContext } from 'react'
+import { StyleSheet } from 'react-native'
 import { Context } from '../context/BlogContext'
+import BlogPostForm from '../components/BlogPostForm'
 
 const EditScreen = ({ navigation }) => {
-    //ORDER OF THE CONST VARIABLES MATTER - VARIABLES NEED TO BE DEFINED BEFORE THEY CAN BE IMPLEMENTED -otherwise the hooks below wont work
-    const { state } = useContext(Context)
-    const blogPost = state.find(blogPost => blogPost.id === navigation.getParam('id'))
+    //ORDER OF THE CONST VARIABLES MATTER
+    const id = navigation.getParam('id')
+    const { state, editBlogPost } = useContext(Context)
+    const blogPost = state.find(blogPost => blogPost.id === id)
     
-    const [title, setTitle] = useState(blogPost.title)
-    const [content, setContent] = useState(blogPost.content)
-    // const { editBlogPost } = useContext(Context)
-
-    return (
-        <View>
-            <Text>Edit Screen - {navigation.getParam('id')}</Text>
-            <Text style={styles.label}>Enter Title:</Text>
-            <TextInput value={title} onChangeText={text => setTitle(text)} style={styles.input}/>
-            <Text style={styles.label}>Enter Content:</Text>
-            <TextInput value={content} onChangeText={text => setContent(text)} style={styles.input}/>
-            {/* <Button 
-                title='Add Blog Post' 
-                onPress={() => {
-                    addBlogPost(title, content, () => {
-                        navigation.navigate('Index')
-                    }) 
-                }} 
-                /> */}
-               
-                
-        </View>
-    )
+    return <BlogPostForm 
+    initialValues = {{title: blogPost.title, content: blogPost.content}}
+    onSubmit={(newTitle, newContent) => {
+        editBlogPost(id, newTitle, newContent)
+    }
+    }/>
+    
 }
 
 const styles = StyleSheet.create({

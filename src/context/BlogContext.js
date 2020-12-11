@@ -10,6 +10,10 @@ const blogReducer = (state, action) => {
             return [...state, {title: action.payload.title, content: action.payload.content, id: Math.floor(Math.random() * 9999)}]
         case 'delete_blogpost':
             return state.filter(blogPost => blogPost.id !== action.payload)
+        case 'edit_blogpost':
+            return state.map(blogPost => {
+                return blogPost.id === action.payload.id ? action.payload : blogPost
+            })
         default: 
             return state
     }
@@ -25,6 +29,14 @@ const addBlogPost = dispatch => {
 const deleteBlogPost = dispatch => {
     return (id) => {
         dispatch({type: 'delete_blogpost', payload: id})
+    }
+}
+
+const editBlogPost = dispatch => {
+    return (id, title, content) => {
+        dispatch({type: 'edit_blogpost', 
+            payload: {id, title, content}
+        })
     }
 }
 
@@ -46,7 +58,7 @@ const deleteBlogPost = dispatch => {
 
 export const { Context, Provider } = createDataContext(
     blogReducer, 
-    { addBlogPost, deleteBlogPost }, 
+    { addBlogPost, deleteBlogPost, editBlogPost }, 
     [{ title: 'TEST POST', content:'TEST CONTENT',  id: 1 }]
     // typically the initial state above would be an empty array, but for testing purposes, we've entered in data so that we don't have to continually add a blog post in order to test it
     )
